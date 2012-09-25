@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CalendarView">
+
+        <!-- 单元格间隔 -->
+        <attr name="cellSpace" format="dimension" />
+        <!-- 边框大小 -->
+        <attr name="cellLineSize" format="dimension" />
+        <!-- 边框颜色 -->
+        <attr name="cellLineColor" format="color" />
+        <!-- 单元格宽度 -->
+        <attr name="cellWidth" format="dimension" />
+        <!-- 单元格高度 -->
+        <attr name="cellHeight" format="dimension" />
+        <!-- 文字大小 -->
+        <attr name="cellTextSize" format="dimension" />
+        <!-- 文字颜色 -->
+        <attr name="cellTextColor" format="reference|color" />
+        <!-- 内填充 -->
+        <attr name="cellPaddingTop" format="dimension" />
+        <attr name="cellPaddingRight" format="dimension" />
+        <attr name="cellPaddingLeft" format="dimension" />
+        <attr name="cellPaddingBottom" format="dimension" />
+        <!-- 单元格背景颜色 -->
+        <attr name="cellBackgroundColor" format="reference|color" />
+        <!-- 单元格图片 -->
+        <attr name="cellDrawable" format="reference" />
+
+        <!-- 星期文字用","分割 -->
+        <attr name="weeks" format="string" />
+        <!-- 星期高度 -->
+        <attr name="weeksHeight" format="dimension" />
+        <!-- 星期文字大小 -->
+        <attr name="weeksTextSize" format="dimension" />
+        <!-- 星期文字颜色 -->
+        <attr name="weeksTextColor" format="color" />
+        <!-- 星期背景颜色 -->
+        <attr name="weeksBackgroundColor" format="color" />
+        <!-- 星期背景颜色 -->
+        <attr name="weeksDrawable" format="reference" />
+    </declare-styleable>
+
+</resources>
