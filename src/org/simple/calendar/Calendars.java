@@ -53,17 +53,22 @@ public class Calendars {
 	/**
 	 * 触摸坐标偏移(滑动效果)
 	 */
-	public static final int FLING_MIN_DISTANCE = 50;
+	/* package */static final int FLING_MIN_DISTANCE = 50;
 
 	/**
 	 * 单元格行数量
 	 */
-	public static final int CELL_ROW_COUNT = 6;
+	/* package */static final int CELL_ROW_COUNT = 6;
 
 	/**
 	 * 单元格列数量
 	 */
-	public static final int CELL_COL_COUNT = 7;
+	/* package */static final int CELL_COL_COUNT = 7;
+
+	/**
+	 * 动画因子
+	 */
+	/* package */static final float ANIMATION_STEP_FACTOR = 0.5f;
 
 	/**
 	 * 对应指定年对应月的天数，包含闰年的计算
@@ -75,7 +80,7 @@ public class Calendars {
 	private static final int[] DAYS = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31,
 			30, 31 };
 
-	public static int getDays(int year, int month) {
+	/* package */static int getDays(int year, int month) {
 		if (month != 1) {
 			return DAYS[month];
 		}
@@ -85,12 +90,7 @@ public class Calendars {
 		return DAYS[month];
 	}
 
-	/**
-	 * 动画因子
-	 */
-	public static final float ANIMATION_STEP_FACTOR = 0.5f;
-
-	public static void destoryBitmap(Bitmap bitmap) {
+	/* package */static void destoryBitmap(Bitmap bitmap) {
 		if (bitmap != null && !bitmap.isRecycled()) {
 			bitmap.recycle();
 		}

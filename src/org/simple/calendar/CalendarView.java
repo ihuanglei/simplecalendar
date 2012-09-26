@@ -13,6 +13,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -180,12 +181,20 @@ public class CalendarView extends View implements OnGestureListener {
 				Drawable cellDrawable = typedArray.getDrawable(attr);
 				calendarCellStyle.setDrawable(cellDrawable);
 				break;
+			case R.styleable.CalendarView_cellDrawableX:
+				Drawable cellDrawableX = typedArray.getDrawable(attr);
+				calendarCellStyle.setDrawableX(cellDrawableX);
+				break;
 			case R.styleable.CalendarView_cellBackgroundColor:
 				ColorStateList cellBackgroundColor = typedArray
 						.getColorStateList(attr);
 				calendarCellStyle
 						.setBackgroundColor(cellBackgroundColor != null ? cellBackgroundColor
 								: calendarCellStyle.getBackgroundColor());
+				break;
+			case R.styleable.CalendarView_cellBackgroundColorX:
+				calendarCellStyle.setBackgroundColorX(typedArray.getColor(attr,
+						calendarCellStyle.getBackgroundColorX()));
 				break;
 			case R.styleable.CalendarView_cellTextSize:
 				calendarCellStyle.setTextSize(typedArray.getDimensionPixelSize(
@@ -197,6 +206,18 @@ public class CalendarView extends View implements OnGestureListener {
 				calendarCellStyle
 						.setTextColor(cellTextColor != null ? cellTextColor
 								: calendarCellStyle.getTextColor());
+				break;
+			case R.styleable.CalendarView_cellTextColorX:
+				calendarCellStyle.setTextColorX(typedArray.getColor(attr,
+						calendarCellStyle.getTextColorX()));
+				break;
+			case R.styleable.CalendarView_cellWeekEndTextColor:
+				calendarCellStyle.setWeekEndTextColor(typedArray.getColor(attr,
+						calendarCellStyle.getWeekEndTextColor()));
+				break;
+			case R.styleable.CalendarView_cellWeekEndTextColorX:
+				calendarCellStyle.setWeekEndTextColorX(typedArray.getColor(
+						attr, calendarCellStyle.getWeekEndTextColorX()));
 				break;
 			case R.styleable.CalendarView_cellLineSize:
 				calendarCellStyle.setLineSize(typedArray.getFloat(attr,
@@ -620,7 +641,6 @@ public class CalendarView extends View implements OnGestureListener {
 		float weekWidth = (float) (canvasWidth - paddingLeft - paddingRight)
 				/ Calendars.CELL_COL_COUNT;
 
-		RectF bounds = new RectF();
 		float x = 0f;
 		float y = 0f;
 		float stringHeight = 0f;
@@ -629,6 +649,7 @@ public class CalendarView extends View implements OnGestureListener {
 		/**
 		 * 绘制背景颜色、背景图片
 		 */
+		RectF bounds = new RectF();
 		bounds.left = paddingRight;
 		bounds.top = paddingTop;
 		bounds.right = canvasWidth - paddingRight;
@@ -657,7 +678,6 @@ public class CalendarView extends View implements OnGestureListener {
 			// 日历内边距，文字宽度 必须把顶点坐标偏移
 			x = weekWidth * (col++) + paddingLeft;
 			y = paddingTop + stringHeight;
-
 			canvas.drawText(week, x, y, paint);
 		}
 
@@ -743,19 +763,45 @@ public class CalendarView extends View implements OnGestureListener {
 			// 设置单元格对应的坐标
 			cell.setBounds(bounds);
 
+			int textColor = Color.TRANSPARENT;
+			Drawable drawable = null;
+			int backgroundColor = Color.TRANSPARENT;
+			/**
+			 * 绘制日期文字
+			 */
+			if (cell.isNextMonth() || cell.isPreviousMonth()) {
+				// 非本月
+				if (cell.getWeek() == Week.SUNDAY) {
+					textColor = calendarCellStyle.getWeekEndTextColorX();
+				} else {
+					textColor = calendarCellStyle.getTextColorX();
+				}
+				backgroundColor = calendarCellStyle.getBackgroundColorX();
+				drawable = calendarCellStyle.getDrawableX();
+			} else {
+				// 本月
+				if (cell.getWeek() == Week.SUNDAY) {
+					textColor = calendarCellStyle.getWeekEndTextColor();
+				} else {
+					textColor = calendarCellStyle
+							.getCurrentTextColor(Calendars.EMPTY_STATE_SET);
+				}
+				backgroundColor = calendarCellStyle
+						.getCurrentBackgroundColor(Calendars.EMPTY_STATE_SET);
+				drawable = calendarCellStyle
+						.getCurrentDrawable(Calendars.EMPTY_STATE_SET);
+			}
+
 			/**
 			 * 绘制单元格颜色
 			 */
 			paint.setStyle(Paint.Style.FILL);
-			paint.setColor(calendarCellStyle
-					.getCurrentBackgroundColor(Calendars.EMPTY_STATE_SET));
+			paint.setColor(backgroundColor);
 			canvas.drawRect(bounds, paint);
 
 			/**
 			 * 绘制单元格背景
 			 */
-			Drawable drawable = calendarCellStyle
-					.getCurrentDrawable(Calendars.EMPTY_STATE_SET);
 			if (drawable != null) {
 				Rect rect = new Rect();
 				bounds.round(rect);
@@ -763,28 +809,7 @@ public class CalendarView extends View implements OnGestureListener {
 				drawable.draw(canvas);
 			}
 
-			/**
-			 * 绘制日期文字
-			 */
-			// :TODO 配置颜色
-			if (cell.isNextMonth() || cell.isPreviousMonth()) {
-				// 非本月文字颜色
-				// 周末颜色
-				if (cell.getWeek() == Week.SUNDAY) {
-					paint.setColor(0xffe5b4b2);
-				} else {
-					paint.setColor(0xFFb4b4b4);
-				}
-			} else {
-				// 本月文字颜色
-				// 周末颜色
-				if (cell.getWeek() == Week.SUNDAY) {
-					paint.setColor(0xffb24c49);
-				} else {
-					paint.setColor(calendarCellStyle
-							.getCurrentTextColor(Calendars.EMPTY_STATE_SET));
-				}
-			}
+			paint.setColor(textColor);
 			paint.setTextSize(calendarCellStyle.getTextSize());
 			stringHeight = paint.descent() - paint.ascent();
 			canvas.drawText("" + cell.getDay(), bounds.left + stringHeight / 4,
@@ -800,18 +825,16 @@ public class CalendarView extends View implements OnGestureListener {
 				canvas.drawRect(bounds, paint);
 			}
 
-			// 回调
-			if (calendarListener != null) {
-				calendarListener.onDraw(canvas, cell);
-			}
-
 		}
-
 		Log.d(TAG, "Generate Cells Bitmap");
-
 		return bitmap;
 	}
 
+	/**
+	 * 绘制选中日历单元格
+	 * 
+	 * @param canvas
+	 */
 	private void drawSelected(Canvas canvas) {
 		CalendarCell cell = getSelectedCell();
 		RectF bounds = cell.getBounds();
@@ -861,14 +884,14 @@ public class CalendarView extends View implements OnGestureListener {
 
 	@Override
 	public boolean onDown(MotionEvent event) {
-		if (isAnimation)
+		if (isAnimation) {
 			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public void onShowPress(MotionEvent e) {
-
 	}
 
 	@Override
@@ -898,14 +921,12 @@ public class CalendarView extends View implements OnGestureListener {
 		if (calendarListener != null) {
 			calendarListener.onCellLongSelected(getSelectedCell());
 		}
-
 	}
 
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
 		float dx = e2.getX() - e1.getX();
-
 		if (Math.abs(dx) > Calendars.FLING_MIN_DISTANCE) {
 			if (dx > 0) {
 				goPreviousMonth();

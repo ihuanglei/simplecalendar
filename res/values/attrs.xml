@@ -17,16 +17,25 @@
         <attr name="cellTextSize" format="dimension" />
         <!-- 文字颜色 -->
         <attr name="cellTextColor" format="reference|color" />
+        <!-- 非本月文字颜色 -->
+        <attr name="cellTextColorX" format="color" />
+        <!-- 周末文字颜色 -->
+        <attr name="cellWeekEndTextColor" format="color" />
+        <!-- 非本月周末文字颜色 -->
+        <attr name="cellWeekEndTextColorX" format="color" />
+        <!-- 单元格背景颜色 -->
+        <attr name="cellBackgroundColor" format="reference|color" />
+        <!-- 非本月单元格背景颜色 -->
+        <attr name="cellBackgroundColorX" format="color" />
+        <!-- 单元格图片 -->
+        <attr name="cellDrawable" format="reference" />
+        <!-- 非本月单元格图片 -->
+        <attr name="cellDrawableX" format="reference" />
         <!-- 内填充 -->
         <attr name="cellPaddingTop" format="dimension" />
         <attr name="cellPaddingRight" format="dimension" />
         <attr name="cellPaddingLeft" format="dimension" />
         <attr name="cellPaddingBottom" format="dimension" />
-        <!-- 单元格背景颜色 -->
-        <attr name="cellBackgroundColor" format="reference|color" />
-        <!-- 单元格图片 -->
-        <attr name="cellDrawable" format="reference" />
-
         <!-- 星期文字用","分割 -->
         <attr name="weeks" format="string" />
         <!-- 星期高度 -->

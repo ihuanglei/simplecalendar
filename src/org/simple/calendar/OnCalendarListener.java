@@ -1,7 +1,5 @@
 package org.simple.calendar;
 
-import android.graphics.Canvas;
-
 /**
  * 日历监听器
  * 
@@ -10,14 +8,6 @@ import android.graphics.Canvas;
  * @date Sep 18, 2012
  */
 public interface OnCalendarListener {
-	
-
-	/**
-	 * 
-	 * @param cell
-	 * @return
-	 */
-	public void onDraw(Canvas canvas, final CalendarCell cell);
 
 	/**
 	 * 选择单元格事件
