@@ -6,7 +6,7 @@
         <!-- 单元格间隔 -->
         <attr name="cellSpace" format="dimension" />
         <!-- 边框大小 -->
-        <attr name="cellLineSize" format="dimension" />
+        <attr name="cellLineSize" format="float" />
         <!-- 边框颜色 -->
         <attr name="cellLineColor" format="color" />
         <!-- 单元格宽度 -->

@@ -102,9 +102,14 @@ public class CalendarView extends View implements OnGestureListener {
 	private float y = .0f;
 
 	/**
-	 * 动画速度
+	 * 滚动方向 -1:右 1:左
 	 */
 	private int ditect = 1;
+
+	/**
+	 * 适配
+	 */
+	private CalendarAdapter adapter = null;
 
 	/**
 	 * @param context
@@ -252,11 +257,8 @@ public class CalendarView extends View implements OnGestureListener {
 			}
 		}
 		typedArray.recycle();
-
 		paint.setAntiAlias(true);
-
 		gestureDetector = new GestureDetector(getContext(), this);
-
 		setDate(0, 0);
 	}
 
@@ -390,6 +392,15 @@ public class CalendarView extends View implements OnGestureListener {
 	 */
 	public void setDate(int year, int month) {
 		calculateCalendarCell(year, month);
+	}
+
+	/**
+	 * 数据集
+	 * 
+	 * @param adapter
+	 */
+	public void setAdapter(CalendarAdapter adapter) {
+		this.adapter = adapter;
 	}
 
 	/**
@@ -532,7 +543,7 @@ public class CalendarView extends View implements OnGestureListener {
 		if (mode == MeasureSpec.EXACTLY) {
 			Log.w(TAG, "layout_height=\"FILL_PARENT\" ignore cellHeight");
 			if (weeksHeight <= 0) {
-				calendarWeek.setHeight((int) (size * .05f));
+				calendarWeek.setHeight((int) (size * .08f));
 			}
 			return size;
 		}
@@ -544,7 +555,7 @@ public class CalendarView extends View implements OnGestureListener {
 						"CalendarView layout_height=\"WRAP_CONTENT\" cellHeight must be set");
 			}
 			if (weeksHeight <= 0) {
-				weeksHeight = (int) (height * .05f);
+				weeksHeight = (int) (height * .08f);
 				calendarWeek.setHeight(weeksHeight);
 			}
 			height += weeksHeight;
@@ -574,6 +585,7 @@ public class CalendarView extends View implements OnGestureListener {
 		if (isAnimation) {
 			if (newCellsBitmap == null || newCellsBitmap.isRecycled()) {
 				newCellsBitmap = generateCellsBmp();
+				onAnimationStart();
 			}
 			canvas.drawBitmap(newCellsBitmap, x > 0 ? x - getWidth() : x
 					+ getWidth(), y, null);
@@ -601,7 +613,7 @@ public class CalendarView extends View implements OnGestureListener {
 	 */
 	@Override
 	protected void onAnimationStart() {
-
+		Log.d(TAG, "onAnimationStart");
 	}
 
 	/*
@@ -611,6 +623,7 @@ public class CalendarView extends View implements OnGestureListener {
 	 */
 	@Override
 	protected void onAnimationEnd() {
+		Log.d(TAG, "onAnimationEnd");
 		Calendars.destoryBitmap(cellsBitmap);
 		cellsBitmap = Bitmap.createBitmap(newCellsBitmap);
 		Calendars.destoryBitmap(newCellsBitmap);
@@ -836,8 +849,15 @@ public class CalendarView extends View implements OnGestureListener {
 	 * @param canvas
 	 */
 	private void drawSelected(Canvas canvas) {
-		CalendarCell cell = getSelectedCell();
-		RectF bounds = cell.getBounds();
+		final float cellLineSize = calendarCellStyle.getLineSize();
+		final CalendarCell cell = getSelectedCell();
+		RectF bounds = new RectF(cell.getBounds());
+		if (cellLineSize > 0f) {
+			bounds.left += cellLineSize/2f;
+			bounds.top += cellLineSize/2f;
+			bounds.right -= cellLineSize/2f;
+			bounds.bottom -= cellLineSize/2f;
+		}
 		/**
 		 * 绘制单元格颜色
 		 */
