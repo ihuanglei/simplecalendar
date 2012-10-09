@@ -104,7 +104,7 @@ public class CalendarView extends View implements OnGestureListener {
 	/**
 	 * 滚动方向 -1:右 1:左
 	 */
-	private int ditect = 1;
+	private int direction = 1;
 
 	/**
 	 * 适配
@@ -411,7 +411,7 @@ public class CalendarView extends View implements OnGestureListener {
 		calendar.add(Calendar.MONTH, 1);
 		setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
 		isAnimation = true;
-		ditect = -1;
+		direction = -1;
 	}
 
 	/**
@@ -422,7 +422,7 @@ public class CalendarView extends View implements OnGestureListener {
 		calendar.add(Calendar.MONTH, -1);
 		setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
 		isAnimation = true;
-		ditect = 1;
+		direction = 1;
 	}
 
 	/**
@@ -595,7 +595,7 @@ public class CalendarView extends View implements OnGestureListener {
 			if ((getWidth() - Math.abs(x)) <= Calendars.ANIMATION_STEP_FACTOR) {
 				onAnimationEnd();
 			} else {
-				x += ditect * (getWidth() - Math.abs(x))
+				x += direction * (getWidth() - Math.abs(x))
 						* Calendars.ANIMATION_STEP_FACTOR;
 			}
 			postInvalidate();
@@ -755,9 +755,10 @@ public class CalendarView extends View implements OnGestureListener {
 		// 循环绘制日历单元格
 		for (CalendarCell cell : calendarCells) {
 
+			final int index = cell.getIndex();
 			// 计算当前单元格在日历中对应的行、列
-			int row = cell.getIndex() / 7;
-			int col = cell.getIndex() % 7;
+			final int row = index / 7;
+			final int col = index % 7;
 
 			int top = row * cellPaddingTB;
 			int left = col * cellPaddingLF;
@@ -828,6 +829,16 @@ public class CalendarView extends View implements OnGestureListener {
 			canvas.drawText("" + cell.getDay(), bounds.left + stringHeight / 4,
 					bounds.top + stringHeight, paint);
 
+			if (adapter != null) {
+				if (index < adapter.getCount()) {
+					canvas.save();
+					canvas.translate(bounds.left, bounds.top);
+					Drawable draw = adapter.getDraw(index);
+					draw.draw(canvas);
+					canvas.restore();
+				}
+			}
+
 			/**
 			 * 绘制外框
 			 */
@@ -853,10 +864,10 @@ public class CalendarView extends View implements OnGestureListener {
 		final CalendarCell cell = getSelectedCell();
 		RectF bounds = new RectF(cell.getBounds());
 		if (cellLineSize > 0f) {
-			bounds.left += cellLineSize/2f;
-			bounds.top += cellLineSize/2f;
-			bounds.right -= cellLineSize/2f;
-			bounds.bottom -= cellLineSize/2f;
+			bounds.left += cellLineSize / 2f;
+			bounds.top += cellLineSize / 2f;
+			bounds.right -= cellLineSize / 2f;
+			bounds.bottom -= cellLineSize / 2f;
 		}
 		/**
 		 * 绘制单元格颜色

@@ -1,5 +1,6 @@
 package example;
 
+import org.simple.calendar.CalendarView;
 import org.simple.calendar.R;
 
 import android.app.Activity;
@@ -12,6 +13,8 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView1);
+		calendarView.setAdapter(new DataAdapter());
 	}
 
 	@Override
