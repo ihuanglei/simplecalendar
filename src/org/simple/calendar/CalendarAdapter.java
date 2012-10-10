@@ -3,7 +3,10 @@
  */
 package org.simple.calendar;
 
-import android.graphics.drawable.Drawable;
+import java.util.Calendar;
+
+import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -17,19 +20,27 @@ import android.widget.BaseAdapter;
  */
 public abstract class CalendarAdapter extends BaseAdapter {
 
-	/* (non-Javadoc)
-	 * @see android.widget.Adapter#getView(int, android.view.View, android.view.ViewGroup)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.widget.Adapter#getView(int, android.view.View,
+	 * android.view.ViewGroup)
 	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		throw new UnsupportedOperationException();
 	}
-	
+
+	protected int getIndex() {
+		Calendar calendar = Calendar.getInstance();
+		return 0;
+	}
+
 	/**
 	 * 
 	 * @param position
 	 * @return
 	 */
-	public abstract Drawable getDraw(int position);
+	public abstract void onDraw(Canvas canvas, RectF bounds);
 
 }

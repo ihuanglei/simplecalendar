@@ -87,6 +87,11 @@ public class CalendarView extends View implements OnGestureListener {
 	private Bitmap newCellsBitmap = null;
 
 	/**
+	 * 数据位图
+	 */
+	private Bitmap adapterBitmap = null;
+
+	/**
 	 * 动画播放
 	 */
 	private boolean isAnimation = false;
@@ -572,11 +577,13 @@ public class CalendarView extends View implements OnGestureListener {
 	@Override
 	protected void onDraw(Canvas canvas) {
 
+		// 日历星期
 		if (weeksBitmap == null) {
 			weeksBitmap = generateWeeksBmp();
 		}
 		canvas.drawBitmap(weeksBitmap, 0, 0, null);
 
+		// 日历单元格
 		if (cellsBitmap == null) {
 			cellsBitmap = generateCellsBmp();
 		}
@@ -602,7 +609,16 @@ public class CalendarView extends View implements OnGestureListener {
 		}
 
 		if (!isAnimation) {
+			// 日历被选中的日期
 			drawSelected(canvas);
+
+			// 自定义数据
+			if (adapterBitmap == null || adapterBitmap.isRecycled()) {
+				adapterBitmap = generateAdapterBmp();
+			}
+			if (adapterBitmap != null) {
+				canvas.drawBitmap(adapterBitmap, 0, 0, paint);
+			}
 		}
 	}
 
@@ -627,6 +643,7 @@ public class CalendarView extends View implements OnGestureListener {
 		Calendars.destoryBitmap(cellsBitmap);
 		cellsBitmap = Bitmap.createBitmap(newCellsBitmap);
 		Calendars.destoryBitmap(newCellsBitmap);
+		Calendars.destoryBitmap(adapterBitmap);
 		isAnimation = false;
 		x = 0;
 		y = 0;
@@ -829,16 +846,6 @@ public class CalendarView extends View implements OnGestureListener {
 			canvas.drawText("" + cell.getDay(), bounds.left + stringHeight / 4,
 					bounds.top + stringHeight, paint);
 
-			if (adapter != null) {
-				if (index < adapter.getCount()) {
-					canvas.save();
-					canvas.translate(bounds.left, bounds.top);
-					Drawable draw = adapter.getDraw(index);
-					draw.draw(canvas);
-					canvas.restore();
-				}
-			}
-
 			/**
 			 * 绘制外框
 			 */
@@ -848,9 +855,32 @@ public class CalendarView extends View implements OnGestureListener {
 				paint.setColor(cellLineColor);
 				canvas.drawRect(bounds, paint);
 			}
-
 		}
 		Log.d(TAG, "Generate Cells Bitmap");
+		return bitmap;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private Bitmap generateAdapterBmp() {
+		Bitmap bitmap = null;
+		if (adapter != null) {
+			bitmap = Bitmap.createBitmap(getWidth(), getHeight(),
+					Config.ARGB_8888);
+			Canvas canvas = new Canvas(bitmap);
+			for (int i = 0; i < adapter.getCount(); ++i) {
+				int index = (int) adapter.getItemId(i);
+				if (index < 0 || index > calendarCells.length) {
+					throw new ArrayIndexOutOfBoundsException(
+							"calendar cells index");
+				}
+				RectF f = calendarCells[index].getBounds();
+				adapter.onDraw(canvas, new RectF(f));
+			}
+			Log.d(TAG, "Generate Adapter Bitmap");
+		}
 		return bitmap;
 	}
 
@@ -876,7 +906,6 @@ public class CalendarView extends View implements OnGestureListener {
 		paint.setColor(calendarCellStyle
 				.getCurrentBackgroundColor(Calendars.SELECTED_STATE_SET));
 		canvas.drawRect(bounds, paint);
-
 		/**
 		 * 绘制单元格背景
 		 */
@@ -888,7 +917,6 @@ public class CalendarView extends View implements OnGestureListener {
 			drawable.setBounds(rect);
 			drawable.draw(canvas);
 		}
-
 		/**
 		 * 绘制文字
 		 */

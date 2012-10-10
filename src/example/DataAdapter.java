@@ -2,13 +2,22 @@ package example;
 
 import org.simple.calendar.CalendarAdapter;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.Paint;
+import android.graphics.RectF;
 
 public class DataAdapter extends CalendarAdapter {
+
+	private Paint paint;
+
+	/**
+	 * 
+	 */
+	public DataAdapter() {
+		paint = new Paint();
+		paint.setAntiAlias(true);
+	}
 
 	@Override
 	public int getCount() {
@@ -28,12 +37,27 @@ public class DataAdapter extends CalendarAdapter {
 		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simple.calendar.CalendarAdapter#onDraw(android.graphics.Canvas,
+	 * float, float)
+	 */
 	@Override
-	public Drawable getDraw(int position) {
-		Bitmap bitmap = Bitmap.createBitmap(5, 5, Bitmap.Config.RGB_565);
-		Canvas canvas = new Canvas(bitmap);
-		canvas.drawColor(Color.GREEN);
-		return new BitmapDrawable(bitmap);
+	public void onDraw(Canvas canvas, RectF bounds) {
+		paint.setColor(Color.YELLOW);
+		paint.setAlpha(50);
+		paint.setStyle(Paint.Style.FILL);
+		canvas.drawRect(bounds, paint);
+		paint.setAlpha(100);
+		paint.setColor(Color.RED);
+		paint.setStyle(Paint.Style.STROKE);
+		paint.setStrokeWidth(0.3f);
+		canvas.drawRect(bounds, paint);
+		paint.setColor(Color.BLACK);
+		canvas.drawText("中秋", bounds.left, bounds.centerY()
+				+ (paint.descent() - paint.ascent()) / 2, paint);
+
 	}
 
 }
